@@ -3,8 +3,11 @@
 
 import numpy as np
 from scipy import stats
+import requests as rq
 
 from analyzers.utils import IndicatorUtils
+from analyzers.informants import *
+
 
 
 class IIV(IndicatorUtils):
@@ -24,14 +27,26 @@ class IIV(IndicatorUtils):
 
         dataframe = self.convert_to_dataframe(historical_data)
 
-        z = np.abs(stats.zscore(dataframe['volume']))
-        filtered = dataframe.volume[(z < 3)]
+        # z = np.abs(stats.zscore(dataframe['volume']))
+        # filtered = dataframe.volume[(z < 3)]
 
-        previous_mean = filtered.mean()
+        # previous_mean = filtered.mean()
 
-        dataframe[signal[0]] = dataframe['volume'] / previous_mean
+        dataframe[signal[0]] = dataframe['volume'].pct_change()*100
+        # dataframe[signal[0]] = dataframe['volume']/ previous_mean
 
-        dataframe['is_hot'] = dataframe[signal[0]] >= hot_thresh
+        dataframe["SMA"] =  dataframe['close'].rolling(9).mean()
+        dataframe['is_hot'] = dataframe[signal[0]] >= hot_thresh 
+        dataframe ["sma_crossed"] = dataframe["close"] > dataframe["SMA"] 
+        dataframe["liquidity"] = dataframe["close"]*dataframe["volume"]
+        dataframe["liq_bool"] = dataframe["liquidity"] > 2000
+        x = dataframe["liq_bool"].tail(12).all()
         dataframe['is_cold'] = False
+        # dataframe['is_hot'] = True
 
+        dataframe['is_hot'] = dataframe['is_hot'] & dataframe['sma_crossed'] 
+        dataframe['is_hot'] = dataframe['is_hot'] & x
+
+        # print(dataframe)
+        # print(x)
         return dataframe

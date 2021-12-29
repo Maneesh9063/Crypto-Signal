@@ -30,7 +30,7 @@ class WebhookNotifier(NotifierUtils):
         #market_pair = market_pair.replace('/', '_').lower()
         #chart_file = '{}/{}_{}_{}.png'.format('./charts', exchange, market_pair, candle_period)
 
-        data = {'messages': json.dumps(messages)}
+        data = json.dumps(messages)
 
         if chart_file and os.path.exists(chart_file):
             files = {'chart': open(chart_file, 'rb')}
