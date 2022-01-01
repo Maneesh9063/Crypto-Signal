@@ -6,7 +6,6 @@ import concurrent.futures
 import sys
 import time
 from threading import Thread
-
 import structlog
 
 import conf

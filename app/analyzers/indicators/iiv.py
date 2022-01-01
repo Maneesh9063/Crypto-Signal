@@ -39,7 +39,7 @@ class IIV(IndicatorUtils):
         dataframe['is_hot'] = dataframe[signal[0]] >= hot_thresh 
         dataframe ["sma_crossed"] = dataframe["close"] > dataframe["SMA"] 
         dataframe["liquidity"] = dataframe["close"]*dataframe["volume"]
-        dataframe["liq_bool"] = dataframe["liquidity"] > 2000
+        dataframe["liq_bool"] = dataframe["liquidity"] > 3500
         x = dataframe["liq_bool"].tail(12).all()
         dataframe['is_cold'] = False
         # dataframe['is_hot'] = True
